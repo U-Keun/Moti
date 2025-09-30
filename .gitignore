@@ -1,0 +1,62 @@
+# --- Node / SvelteKit ---
+node_modules/
+.svelte-kit/
+build/
+.output/
+.vercel/
+.netlify/
+.wrangler/
+
+# Vite timestamp artifacts
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Storybook
+storybook-static/
+*storybook.log
+
+# Vitest / Coverage
+coverage/
+.nyc_output/
+
+# TypeScript build info (if incremental is on)
+*.tsbuildinfo
+
+# --- Tauri / Rust ---
+# Tauri (Rust) build outputs
+src-tauri/target/
+src-tauri/target/**
+
+# Release bundles (.app / .dmg / .msi / .deb / etc.)
+src-tauri/target/release/bundle/**
+
+# (optional) macOS dSYM symbol folders
+*.dSYM/
+
+# Cargo build artifacts outside src-tauri (just in case)
+target/
+
+# --- Env ---
+.env
+.env.*
+!.env.example
+!.env.test
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# --- Editors ---
+# Vim (swap/backup/session)
+*.swp
+*.swo
+*.swx
+Session.vim
+.netrwhist
