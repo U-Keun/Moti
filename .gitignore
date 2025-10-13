@@ -1,3 +1,10 @@
+# HandDaemon sidecar outputs
+src-tauri/sidecar/HandDaemon/HandDaemon.app
+src-tauri/sidecar/HandDaemon/*.o
+src-tauri/sidecar/HandDaemon/*.dSYM
+src-tauri/sidecar/HandDaemon/.build
+src-tauri/sidecar/HandDaemon/*.log
+
 # --- Node / SvelteKit ---
 node_modules/
 .svelte-kit/
