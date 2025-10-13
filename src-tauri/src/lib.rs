@@ -80,15 +80,17 @@ fn build_tray(app: &AppHandle<Wry>) -> tauri::Result<TrayIcon> {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-  tauri::Builder::default()
-    .menu(|app| build_app_menu(app))
-    .on_menu_event(|app, event| handle_menu_event(app, event))
-    .setup(|app| {
+    tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_log::Builder::default().build())
+        .menu(|app| build_app_menu(app))
+        .on_menu_event(|app, event| handle_menu_event(app, event))
+        .setup(|app| {
 
-        let handle = app.handle();
-        let _ = build_tray(&handle)?;
-        Ok(())
-    })
-    .run(tauri::generate_context!())
-    .expect("error while running Moti");
+            let handle = app.handle();
+            let _ = build_tray(&handle)?;
+            Ok(())
+        })
+        .run(tauri::generate_context!())
+        .expect("error while running Moti");
 }
