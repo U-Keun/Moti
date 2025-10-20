@@ -1,40 +1,38 @@
-set -euo pipefail
+#!/usr/bin/env sh
+set -eu
 
 arch="$(uname -m)"
-arch="$(uname -m)"
-if [ "$arch" = "arm64" ]; then
-  TRIPLE="aarch64-apple-darwin"
-elif [ "$arch" = "x86_64" ]; then
-  TRIPLE="x86_64-apple-darwin"
-else
-  echo "unsupported arch: $arch" >&2; exit 1
-fi
+case "$arch" in
+  arm64)  TRIPLE="aarch64-apple-darwin" ;;
+  x86_64) TRIPLE="x86_64-apple-darwin" ;;
+  *) echo "unsupported arch: $arch" >&2; exit 1 ;;
+esac
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SRC_TAURI_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 OUT="$SRC_TAURI_DIR/binaries/HandDaemon-${TRIPLE}"
 mkdir -p "$SRC_TAURI_DIR/binaries"
 
-PLIST="$(mktemp)"
-cat > "$PLIST" << 'PLIST'
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0"><dict>
-    <key>CFBundleName</key><string>HandDaemon</string>
-    <key>CFBundleIdentifier</key><string>dev.u-keun.HandDaemon</string>
-    <key>CFBundleVersion</key><string>1</string>
-    <key>CFBundleShortVersionString</key><string>1.0</string>
-    <key>NSCameraUsageDescription</key>
-    <string>제스처 인식을 위해 카메라 접근이 필요합니다.</string>
-    <key>NSCameraUseContinuityCameraDeviceType</key>
-    <true/>
-</dict></plist>
-PLIST
+PLIST="$SCRIPT_DIR/Info.plist"
 
-SRC="$SCRIPT_DIR/main.swift"
-swiftc "$SRC" -O \
+SDK_PATH="$(xcrun --show-sdk-path --sdk macosx)"
+
+if ! find "$SCRIPT_DIR" -maxdepth 1 -type f -name '*.swift' | grep -q . ; then
+  echo "No Swift sources found in $SCRIPT_DIR" >&2
+  exit 1
+fi
+
+find "$SCRIPT_DIR" -maxdepth 1 -type f -name '*.swift' -print0 \
+| xargs -0 swiftc \
+    -sdk "$SDK_PATH" \
+    -O \
+    -module-name HandDaemon \
     -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __info_plist -Xlinker "$PLIST" \
     -framework AVFoundation \
+    -framework Vision \
+    -framework CoreGraphics \
+    -framework CoreMedia \
+    -framework CoreVideo \
     -o "$OUT"
 
 chmod +x "$OUT"
