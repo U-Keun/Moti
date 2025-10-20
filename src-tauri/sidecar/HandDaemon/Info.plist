@@ -2,15 +2,21 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"\>
 <plist version="1.0">
 <dict>
-	<key>CFBundleName</key><string>HandDaemon</string>
-	<key>CFBundleDisplayName</key><string>HandDaemon</string>
-	<key>CFBundleIdentifier</key><string>dev.u-keun.HandDaemon</string>
-	<key>CFBundleVersion</key><string>1</string>
-	<key>CFBundleShortVersionString</key><string>1.0</string>
-	<key>CFBundlePackageType</key><string>APPL</string>
-	<key>CFBundleExecutable</key><string>HandDaemon</string>
-	<key>LSUIElement</key><true />
-	<key>NSCameraUsageDescription</key>
-	<string>HandDaemon needs the camera to enable gesture detection.</string>
+    <key>CFBundleName</key>                    <string>HandDaemon</string>
+    <key>CFBundleDisplayName</key>             <string>HandDaemon</string>
+    <key>CFBundleIdentifier</key>              <string>dev.u-keun.HandDaemon</string>
+    <key>CFBundleVersion</key>                 <string>1</string>
+    <key>CFBundleShortVersionString</key>      <string>1.0</string>
+    <key>CFBundlePackageType</key>             <string>APPL</string>
+    <key>CFBundleExecutable</key>              <string>HandDaemon</string>
+    <key>LSUIElement</key>                     <true/>
+
+    <!-- 권한 문구(필수) -->
+    <key>NSCameraUsageDescription</key>
+    <string>HandDaemon needs the camera to enable gesture detection.</string>
+
+    <!-- Continuity Camera 사용 선언(macOS 14+) -->
+    <key>NSCameraUseContinuityCameraDeviceType</key>
+    <true/>
 </dict>
 </plist>
