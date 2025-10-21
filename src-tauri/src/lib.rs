@@ -78,6 +78,60 @@ fn build_tray(app: &AppHandle<Wry>) -> tauri::Result<TrayIcon> {
         .build(app)
 }
 
+/* ===========================
+ * Commands (Tauri v2)
+ * =========================== */
+pub mod cmds {
+    use std::{ process::Command, fs };
+
+    fn has_cgsession() -> bool {
+        let path = "/System/Library/CoreServices/Menu Extras/User.menu/Contents/Resources/CGSession";
+        fs::metadata(path).is_ok()
+    }
+
+    #[tauri::command]
+    pub fn lock_screen() -> Result<(), String> {
+        #[cfg(target_os = "macos")]
+        {
+            if has_cgsession() {
+                let status = Command::new("/System/Library/CoreServices/Menu Extras/User.menu/Contents/Resources/CGSession")
+                    .arg("-suspend")
+                    .status()
+                    .map_err(|e| format!("spawn error: {e}"))?;
+                if status.success() { return Ok(()); } else { eprintln!("[lock] CGSession not found on this macOS"); }
+            }
+        }
+
+        let script = r#"tell application "System Events" to keystroke "q" using {control down, command down}"#;
+        let out = Command::new("osascript")
+            .arg("-e").arg(script)
+            .output()
+            .map_err(|e| format!("osascript spawn error: {e}"))?;
+        if out.status.success() { Ok(()) }
+        else { 
+            let stderr = String::from_utf8_lossy(&out.stderr).to_string(); 
+            Err(format!("osascript failed: {stderr}\n(Hint: grant Accessibility permission to this app)"))
+        }
+
+        #[cfg(not(target_os="macos"))]
+        { Err("lock_screen not supported on this OS".into()) }
+    }
+
+    #[tauri::command]
+    pub fn open_accessibility_pane() -> Result<(), String> {
+        #[cfg(target_os = "macos")]
+        {
+            Command::new("open")
+                .arg("x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")
+                .status()
+                .map_err(|e| format!("open prefs failed: {e}"))?;
+            Ok(())
+        }
+        #[cfg(not(target_os = "macos"))]
+        { Err("not supported".into()) }
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -91,6 +145,10 @@ pub fn run() {
             let _ = build_tray(&handle)?;
             Ok(())
         })
+        .invoke_handler(tauri::generate_handler![
+            cmds::lock_screen,
+            cmds::open_accessibility_pane,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running Moti");
 }
