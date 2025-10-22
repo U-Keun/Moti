@@ -37,7 +37,6 @@
     onMount(() => {
         if (!subscribed) {
             unsub = last.subscribe(maybeLock);
-            unsubscribed = true;
         }
         if (!started) {
             start();
@@ -56,8 +55,5 @@
 {:else}
     <p>Daemon stopped</p>
 {/if}
-
-<button on:click={start} disabled={$running}>Start</button>
-<button on:click={stop} disabled={!$running}>Stop</button>
 
 <slot />
