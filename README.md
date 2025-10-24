@@ -5,7 +5,11 @@
 ## 주요 기능
 - 잠금(Bye) : 손바닥을 보이며 좌/우 흔들기 파형 검출 → 화면 잠금(⌃⌘Q)
 
-https://github.com/user-attachments/assets/6e093e84-7196-4a66-ba05-a54dfa9a30a5
+<video src="https://github.com/user-attachments/assets/349b9da5-4a76-4e9b-b0d5-2fc41b47bbca"
+       controls
+       width="320">
+</video>
 
 - 영역 캡처 (Frame) : 양손으로 만든 프레임을 감지 → 관심 영역 확정 → 해당 영역 캡처
+
 개발 중
